@@ -10,8 +10,8 @@ $OS = gwmi -Class win32_operatingsystem -computername $computername |
 Select-Object @{Name = "MemoryUsage"; Expression = {“{0:N2}” -f ((($_.TotalVisibleMemorySize - $_.FreePhysicalMemory)*100)/ $_.TotalVisibleMemorySize) }} 
 $vol = Get-WmiObject -Class win32_Volume -ComputerName $computername -Filter "DriveLetter = 'C:'" | 
 Select-object @{Name = "C PercentFree"; Expression = {“{0:N2}” -f  (($_.FreeSpace / $_.Capacity)*100) } } 
-
-$uptime = Get-WmiObject Win32_OperatingSystem | Select-Object LastBootUpTime @Name = "uptime";
+$uptime = Get-WmiObject Win32_OperatingSystem | 
+Select-Object LastBootUpTime  
 
    
 $result += [PSCustomObject] @{  
@@ -19,7 +19,7 @@ $result += [PSCustomObject] @{
         CPULoad = "$($AVGProc.Average)%" 
         MemLoad = "$($OS.MemoryUsage)%" 
         CDrive = "$($vol.'C PercentFree')%"
-		uptime = "$('uptime')"
+		uptime = "$uptime"
     } 
  
     $Outputreport = "<HTML><TITLE> Server Health Report </TITLE> 
@@ -32,7 +32,7 @@ $result += [PSCustomObject] @{
                        <TD><B>Avrg.CPU Utilization</B></TD> 
                        <TD><B>Memory Utilization</B></TD> 
                        <TD><B>C Drive Utilizatoin</B></TD>
-					   <TD><B>Uptime Utilization</B></TD></TR>" 
+		       <TD><B>Uptime Utilization</B></TD></TR>" 
                          
     Foreach($Entry in $Result)  
      
